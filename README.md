@@ -1,56 +1,68 @@
 # AlienWare
 Malware in python (not remote access trojan)
 
-1. System Requirements
-   
-Operating System: Windows 10/11 (64-bit recommended)
-
-*(Some functions may fail on older versions like Windows 7/8 due to deprecated APIs.)*
-
-Architecture: x64 (Some low-level operations like MBR overwrite may fail on ARM or x86.)
-
-Admin Privileges: Must run with Administrator rights (UAC bypass is included but may not work on secured systems).
 
 
 
-2. Python Environment
-Python Version: 3.8+ (64-bit version required)
+System Requirements
 
+Operating System:
 
-Dependencies:
-Install via pip install:
+Windows 10/11 (64-bit) required
 
-pip install pycryptodome psutil pywin32 ctypes tkinter requests
+.NET Framework 4.8+ (for WMI/Win32 API calls)
 
-pycryptodome (AES encryption)
-
-psutil (process management)
-
-pywin32 (Windows API access)
-
-tkinter (GUI popups)
+Secure Boot disabled (for firmware/MBR functions)
 
 
 
-3. Antivirus & Security Considerations
-Windows Defender: Must be disabled (script includes Defender disable, but manual exclusion may be needed).
-
-Real-time Scanning: Temporarily disable (or add script to exclusions).
-
-EDR Solutions: May flag/block the script (test in isolated environment).
-
-4. Hardware Requirements
-Storage: At least 10GB free space (for encryption/zip bomb functions).
-
-Memory (RAM): 4GB+ (due to multi-threading and process killing).
-
-CPU: Modern multi-core (handles threading efficiently).
 
 
 
-5. Network Requirements (For Spread Functions)
-Admin Shares (C$): Must be enabled on target machines.
 
-Credentials: Script assumes current user has admin rights on networked PCs.
+Python Environment:
 
-Firewall: Disabled or configured to allow SMB (port 445).
+Python 3.8-3.11 (64-bit) required
+
+Critical Dependencies:
+
+
+pip install pycryptodome psutil pywin32 ctypes tkinter requests wmi pyinstaller
+Post-Install Checks:
+
+Validate python -c "import win32api" runs without errors
+
+Confirm powershell -c "Get-WmiObject" works
+
+Security Configuration:
+
+Defender Exclusion:
+
+Add-MpPreference -ExclusionPath "$env:USERPROFILE\AlienWare.py"
+
+Group Policy Adjustments:
+
+Disable "Script Block Logging"
+
+Enable "Allow Insecure Guest Auth" for SMB
+
+
+
+
+
+Hardware Minimums:
+
+GPU: NVIDIA/AMD with Vulkan support (for GPU attacks)
+
+Storage: 15GB free (25GB if encrypting multiple drives)
+
+Memory: 8GB+ (16GB recommended for concurrent operations)
+
+Network Prerequisites:
+
+SMB1 Protocol enabled:
+
+Enable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol
+Network Discovery on for all profiles
+
+Local Admin Shares pre-configured (C$, ADMIN$)

